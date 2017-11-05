@@ -1,0 +1,5 @@
+# reading data
+cd ~
+wget https://www.ebi.ac.uk/~emily/Online%20courses/NGS/ChIP-seq.zip
+unzip ChIP-seq.zip
+
