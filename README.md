@@ -5,3 +5,11 @@ ChIP‐seq Hands‐on Exercise, by Remco Loos and Myrto Kostadima at EMBL‐EBI,
 
 The goal of the workshop is to introduce researchers to ChIP-Seq data 101 - mapping settings and calling peaks with macs2. The workshop is based on mouse data.
 
+For this workflow, we are going to need the following tools:
+
+1. Bowtie
+2. SAMtools
+3. BEDTools
+4. UCSC Tools
+5. MACS2
+6. And for visualization, we will use ENSEMBL
