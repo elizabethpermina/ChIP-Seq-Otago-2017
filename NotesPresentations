@@ -1,0 +1,19 @@
+# notes - points for a presentation to cover:
+
+
+What is ChIP-Seq
+
+Technology basics:
+Antibodies and immunoprecipitation
+How are regulatory sites structured
+Library prep steps overview
+Analysis steps overview : Sequencing - QC - alignment (bowtie2, options) - Peak calling (macs2) - peak annotation - downstream analysis
+
+Data formats
+
+QC (what is QC information, tools to check and trim data)
+
+Typical ChIP-Seq (peak with mapped reads) and Low-complexity regions
+
+Typical problems (i.e. non-specific binding, overrepresented sequences, data quality, data amount/signal strength)
+
