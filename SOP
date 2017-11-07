@@ -1,0 +1,75 @@
+Standard operational practices and bbest practices
+
+
+ChIP-Seq SOP (standard operating practices) and best-practice advice
+Steps overview
+QC [SOP_QC]
+Decide to use pooled replicates or individual replicates
+Read mapping [SOP_READmapping]
+Peak calling (MACS2)
+IDR (not strictly necessary)
+Peak annotation
+with annotated genome (HOMER)
+with new genome (bedtools intersect)
+De novo signal prediction (ChIPmunk)
+Differential peak calling
+Known signal search (motif scan) (Sarus)
+PWM and consensus comparison (APE)
+
+Experiment design
+
+Antibodies
+sequencing depth
+type of control
+common problems (i.e. repeated sequence, non-specific binding)
+
+Replication is essential when differential binding is concerned. Also, having at least two biological replicates allows you to use IDR strategy to verify binding, even without comparing two conditions.
+
+Number of reads - to have 5-10 M reads usually considered a reasonable minimum, and often people push towards having 20-40 M reads, but obviously it depends on your type of data (species, number of possible binding sites - most of the numbers come from studies on human, mouse and fruit fly)
+
+Controls - there are two types of control in ChIP-Seq, “input” and “mock”/”mock IP”. Input controls are cross-linked and sonicated but not immuno-precipitated. 
+QC
+Use a workflow as defined in SOP_QC for investigating the raw read quality. We assume here that the raw reads are adapter trimmed. We do not necessarily quality trim the reads further.
+It is important to understand what type of peaks are going to be mapped, e.g. broad or narrow peaks. Narrow peaks are normally used for transcription factors whereas histone marks can be based on broad peaks. This needs to be taken into consideration when applying cut-offs for length-filters in QC, Generally you do not necessarily need to filter reads.
+Attention! Also, depending on the sequencer used (especially important if re-analysing old data), the CASAVA version might be a different one, thus a different quality flag needs to be used for, e.g. SolexaQA++, sickle, etc. The newest NGS machines are using CASAVA>1.8, thus the --sanger flag should be used in SolexaQA++, sickle, etc. (more in SOP_QC).
+Pooled vs individual replicates
+If you measured replicates you can decide to pool all replicates together, as done by some projects (e.g. ENSEMBL, and others). This can be done before mapping to the genome or during peak calling (depending on the caller). Sometimes only one replicate is available in the first place. Generally speaking pooling is the simpler method.
+However, other projects, like ENCODE, do not pool and map each replicate individually to the genome. They use a reproducibility analysis (IDR) after peak calling to find reproducible peaks over replicates. It was shown that IDR rather than an enrichment-based metric (e.g., FDR or p-value) makes the numbers of peaks declared more comparable across experiments [Landt et al. 2012]. However, the implementation of IDR is not easy to use.
+Peak calling
+Tool examples:
+MACS2
+sample macs2 run: 
+#macs2 callpeak -t mappedSample1.bam -c mappedIPconrol.bam -f BAM -g dm -n DM_output -q 0.05
+PeakSeq
+SWEMBL
+Irreproducibility Discovery Rate (IDR)
+Used by ENCODe after calling peaks to extract reproducible peaks. Works for individual replicates and pooled replicates.
+IDR
+Peak annotation
+
+Homer contains a useful, all-in-one program for performing peak annotation called annotatePeaks.pl.  In addition to associating peaks with nearby genes, annotatePeaks.pl can perform Gene Ontology Analysis, genomic feature association analysis (Genome Ontology), associate peaks with gene expression data, calculate ChIP-Seq Tag densities from different experiments, and find motif occurrences in peaks.  annotatePeaks.pl can also be used to create histograms and heatmaps.  Description of the annotation functions are covered below, while quantification of tags, motifs, histograms, etc. are covered here. [Q:Homer webpage].HOMER can be used to annotate peaks with your custom annotation file (gff3). 
+options: 
+annotatePeaks.pl <peak/BED file> <genome>   > <output file>
+
+i.e. annotatePeaks.pl ERpeaks.txt hg18   > outputfile.txt
+
+The first two arguments, the <peak file> and <genome>, are required, and must be the first two arguments.  Other optional command line arguments can be placed in any order after the first two.
+By default, annotatePeaks.pl prints the program output to stdout, which can be captured in a file by appending " > filename" to the command.  With most uses of annotatePeaks.pl, the output is a data table that is meant to be opened with EXCEL or similar program. 
+
+
+De novo signal prediction 
+
+ChIPMunk DNA&RNA motif discovery tool comes in a single package (Ruby/Java based) with diChIPMunk.  ChIPMunk can be used to process ChIP-Seq, HT-SELEX, DNase footprints & similar data, including sequence data on RNA-binding proteins (e.g. PAR-CLIP or CLIP-Seq) [Q:ChIPMunk]
+
+Motif scan
+
+SPRy-SARUS stands for Straightforward yet Powerful Rapid SuperAlphabet Representation Utilized for motif Search. This simple tool uses superalphabet approach to scan a given set of sequences for (di)PWM hits scoring no less than a given threshold.
+
+
+Training data
+
+1) Drosophila  https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE76997
+the data has two types of control  
+Using external computational resources
+
+Using publicly available data
