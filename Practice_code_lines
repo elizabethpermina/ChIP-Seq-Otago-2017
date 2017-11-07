@@ -1,69 +1,64 @@
+# temporary etherpad is here: https://tinyurl.com/y7wbdtet
+######################### getting the data and software in the instance ###########################################
+######################### data                                          ###########################################
 # reading data
 cd ~
 wget https://www.ebi.ac.uk/~emily/Online%20courses/NGS/ChIP-seq.zip
 unzip ChIP-seq.zip
-
+###################################################################################################################
+######################### tools                                         ###########################################
 # tools set up 
 # check if you have them by calling the tool
 bowtie2 -h
 bedtools
 samtools
 macs2
-# or enquiring 
+# if not installed, follow the next few steps #### 
 # Bowtie
-
 wget https://downloads.sourceforge.net/project/bowtie-bio/bowtie2/2.3.2/bowtie2-2.3.2-linux-x86_64.zip
 unzip bowtie2-2.3.2-linux-x86_64.zip
-
 echo 'export PATH=$PATH:~/bowtie2-2.3.2' >> ~/.bashrc
 source ~/.bashrc
-
 # Samtools
-
 sudo apt-get -y install samtools
-
 # bedtools
-
 curl -O -L https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz
 tar -xzf bedtools-2.26.0.tar.gz
-
 cd bedtools2
 make
 sudo make install
-
 # USCS tools 
 cd ~/
 wget http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bedGraphToBigWig
 chmod +x bedGraphToBigWig
-
 # MACS2
-
 pip install numpy
 pip install MACS2
-
 # after each installation, check if the tool is installed correctly by calling it again, i.e.
 macs2
 # should result in displaying help/usage print-out, and 
 bowtie2 --help
 # sould do the same for bowtie2
-
+#####################################################################################################################
+############## analysis steps #######################################################################################
 cd ~/ChIP-seq
 
-# mapping  - building index
+# mapping  - building index ##############
 
 bowtie2-build bowtie_index/mm10.fa bowtie_index/mm10
 
 # view index
 ls -l bowtie_index
-
+# mapping to the reference ####
 bowtie2 -x bowtie_index/mm10 -U Oct4.fastq -S Oct4.sam -p 6
+# alternatively, we can tweak the params a bit : #bowtie2 -U Oct4.fastq -S Oct4.sam -x bowtie_index/mm10 --no-mixed -k 4
+# comment of -k and --no-mixed parameters
 
 head -n 10 Oct4.sam
-
 samtools view -bSo Oct4.bam Oct4.sam
 
-
-# Viewing with tview
+##############################
+# Viewing with tview (optional) #
 
 cd
 sudo mkdir /home/linuxbrew
@@ -92,7 +87,9 @@ samtools tview Oct4.sorted.bam bowtie_index/mm10.fa
 #Alternatively, you can guide tview to start in a particular position, as follows:
 
 samtools tview -p chr1:173389928 Oct4.sorted.bam bowtie_index/mm10.fa
+################################
 
+######### Bedgraphs ############
 # We can convert the BAM file into a bedgraph, called Oct4.bedgraph, using the tool genomeCoverageBed from BEDTools:
 genomeCoverageBed -bg -ibam Oct4.sorted.bam -g bowtie_index/mouse.mm10.genome > Oct4.bedgraph
 
@@ -110,6 +107,10 @@ samtools index gfp.sorted.bam
 genomeCoverageBed -bg -ibam gfp.sorted.bam -g bowtie_index/mouse.mm10.genome > gfp.bedgraph
 
 # results are stored here: https://github.com/ngs-docs/angus/blob/update/chipseq/_static/gfp.bedgraph?raw=true
+
+
+# ################# MACS2 ################################################################
+# macs2 callpeak -t ChIP.bam -c Control.bam -f BAM -g dm -n test -B -q 0.05
 
 # running macs2 to find enriched areas
 macs2 callpeak -t Oct4.bam -c gfp.bam --format=BAM --name=Oct4 --gsize=138000000 --tsize=26
