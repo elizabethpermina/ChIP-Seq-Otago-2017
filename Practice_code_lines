@@ -13,32 +13,7 @@ bowtie2 -h
 bedtools
 samtools
 macs2
-# if not installed, follow the next few steps #### 
-# Bowtie
-wget https://downloads.sourceforge.net/project/bowtie-bio/bowtie2/2.3.2/bowtie2-2.3.2-linux-x86_64.zip
-unzip bowtie2-2.3.2-linux-x86_64.zip
-echo 'export PATH=$PATH:~/bowtie2-2.3.2' >> ~/.bashrc
-source ~/.bashrc
-# Samtools
-sudo apt-get -y install samtools
-# bedtools
-curl -O -L https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz
-tar -xzf bedtools-2.26.0.tar.gz
-cd bedtools2
-make
-sudo make install
-# USCS tools 
-cd ~/
-wget http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bedGraphToBigWig
-chmod +x bedGraphToBigWig
-# MACS2
-pip install numpy
-pip install MACS2
-# after each installation, check if the tool is installed correctly by calling it again, i.e.
-macs2
-# should result in displaying help/usage print-out, and 
-bowtie2 --help
-# sould do the same for bowtie2
+
 #####################################################################################################################
 ############## analysis steps #######################################################################################
 cd ~/ChIP-seq
@@ -60,20 +35,9 @@ samtools view -bSo Oct4.bam Oct4.sam
 ##############################
 # Viewing with tview (optional) #
 
-cd
-sudo mkdir /home/linuxbrew
-sudo chown $USER:$USER /home/linuxbrew
-git clone https://github.com/Linuxbrew/brew.git /home/linuxbrew/.linuxbrew
-
-echo 'export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH' >> ~/.bashrc
-source ~/.bashrc
-
-brew tap homebrew/science
-brew install samtools
-
-# sotring data - prepaping it for tview use
+# sorting data - prepaping it for tview use
 cd ~/ChIP-seq/
-samtools sort Oct4.bam -o Oct4.sorted.bam
+samtools sort Oct4.bam Oct4.sorted
 samtools index Oct4.sorted.bam
 
 samtools tview Oct4.sorted.bam bowtie_index/mm10.fa
@@ -102,10 +66,11 @@ genomeCoverageBed -bg -ibam Oct4.sorted.bam -g bowtie_index/mouse.mm10.genome > 
 # Aligning the control sample
 bowtie2 -x bowtie_index/mm10 -U gfp.fastq -S gfp.sam
 samtools view -bSo gfp.bam gfp.sam
-samtools sort gfp.bam -o gfp.sorted.bam
-samtools index gfp.sorted.bam
+samtools sort gfp.bam gfp_sorted
+samtools index gfp_sorted.bam
 genomeCoverageBed -bg -ibam gfp.sorted.bam -g bowtie_index/mouse.mm10.genome > gfp.bedgraph
 
+genomeCoverageBed -bg -ibam Oct4.sorted.bam -g bowtie_index/mouse.mm10.genome > Oct4.bedgraph
 # results are stored here: https://github.com/ngs-docs/angus/blob/update/chipseq/_static/gfp.bedgraph?raw=true
 
 
@@ -114,4 +79,10 @@ genomeCoverageBed -bg -ibam gfp.sorted.bam -g bowtie_index/mouse.mm10.genome > g
 
 # running macs2 to find enriched areas
 macs2 callpeak -t Oct4.bam -c gfp.bam --format=BAM --name=Oct4 --gsize=138000000 --tsize=26
+
+################# ENSEMBL #################################################################
+
+Let’s try to load the file Oct4.bedgraph in the Ensembl genome browser. Select Mouse from the favorite genomes and then click on the 
+Display your data in Ensembl link. http://www.ensembl.org/index.html
+https://github.com/ngs-docs/angus/blob/update/chipseq/_static/Oct4.bedgraph?raw=true
 
