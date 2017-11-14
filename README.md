@@ -1,5 +1,8 @@
 # ChIP-Seq-Otago-2017
 
+# ETHERPAD WITH LINKS FOR THIS WORKSHOP IS HERE: 
+https://beta.etherpad.org/p/H9l6EdbQfR
+
 Analyzing ChIP-seq data - the material here is taken from https://angus.readthedocs.io/en/2017/chip-seq.html, which is based on (the material here is based on the 
 ChIP‐seq Hands‐on Exercise, by Remco Loos and Myrto Kostadima at EMBL‐EBI, available here: https://www.ebi.ac.uk/training/online/course/ebi-next-generation-sequencing-practical-course/chip-seq-analysis/chip-seq-practical
 
