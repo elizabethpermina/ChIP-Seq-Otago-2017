@@ -80,6 +80,9 @@ genomeCoverageBed -bg -ibam Oct4.sorted.bam -g bowtie_index/mouse.mm10.genome > 
 # running macs2 to find enriched areas
 macs2 callpeak -t Oct4.bam -c gfp.bam --format=BAM --name=Oct4 --gsize=138000000 --tsize=26
 
+# prepare output for GREAT analysis http://great.stanford.edu/public/html/
+cat ChIP-seq/Oct4_peaks.narrowPeak | awk 'BEGIN {OFS="\t"}; {print $1,$2,$3}' 
+
 ################# ENSEMBL #################################################################
 
 Let’s try to load the file Oct4.bedgraph in the Ensembl genome browser. Select Mouse from the favorite genomes and then click on the 
